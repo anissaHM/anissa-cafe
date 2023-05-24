@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/dish.dart';
+import '../providers/cart_provider.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends ConsumerWidget {
   const DetailScreen({
     super.key,
     required this.dish,
@@ -11,7 +13,11 @@ class DetailScreen extends StatelessWidget {
   final Dish dish;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final inCart = ref.watch(cartProvider);
+
+    final isInCart = inCart.contains(dish);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(dish.name),
@@ -38,8 +44,23 @@ class DetailScreen extends StatelessWidget {
               children: [
                 Text('Rp. ${dish.price.toString()}'),
                 TextButton(
-                  onPressed: () {},
-                  child: Text('Add'),
+                  onPressed: () {
+                    final wasAdded =
+                        ref.read(cartProvider.notifier).toggleCartStatus(dish);
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(wasAdded
+                            ? 'Dish added as to Cart.'
+                            : 'Dish removed.'),
+                      ),
+                    );
+                  },
+                  child: Icon(
+                      isInCart
+                          ? Icons.shopping_bag
+                          : Icons.shopping_bag_outlined,
+                      key: ValueKey(isInCart)),
                 ),
               ],
             ),
