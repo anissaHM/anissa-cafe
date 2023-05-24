@@ -1,6 +1,6 @@
 # cafe
 
-A new Flutter project.
+An app where the user can select and order food. Written in Dart with the Flutter Framework.
 
 ## Getting Started
 
